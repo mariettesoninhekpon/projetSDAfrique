@@ -137,7 +137,7 @@ dim(agroListeAfter2020PC)
 head(agroListeAfter2020PC)
 ```
 
-#Retenir ceux qui n'ont pas de travail
+# Retenir ceux qui n'ont pas de travail
 ```{r}
 library(dplyr)
 agroListeAfter2020PCO <- filter(agroListeAfter2020PC, occupation =='Au chômage' )
@@ -152,7 +152,7 @@ colnames(agroListeAfter2020PCO)
 ```
 
 
-#Arranger selon l'email 
+# Arranger selon l'email 
 ```{r}
 agroListeTotal <- arrange(agroListeAfter2020PCO, email)
 
@@ -192,38 +192,86 @@ ggplot(data=agroListeTotal, aes(x=periode, y=residence, fill=an))+
 
 
 # Analyse statistique
-
 ```{r}
 summary(agroListeTotal)
 ```
 
+# Convert categorical variables
 ```{r}
-table(agroListeTotal)
+agroListeTotal$residence <- as.factor(agroListeTotal$residence)
+
+agroListeTotal$periode <- as.factor(agroListeTotal$periode)
+
+agroListeTotal$centre <- as.factor(agroListeTotal$centre)
+```
+
+```{r}
+summary(agroListeTotal)
 ```
 
 ```{r}
 table(agroListeTotal$residence)
 ```
 
+
 ```{r}
 mean(table(agroListeTotal$residence))
 ```
 
 ```{r}
-agroListeTotal$residence <- as.factor(agroListeTotal$residence)
+round(mean(table(agroListeTotal$residence)), 2)
 ```
 
 ```{r}
-summary(agroListeTotal)
+round(sd(table(agroListeTotal$residence)), 2)     
+```
+
+
+
+```{r}
+table(agroListeTotal$periode)
 ```
 
 ```{r}
-table(agroListeTotal$residence, agroListeTotal$periode)
+round(mean(table(agroListeTotal$periode)), 2)   
 ```
 
 ```{r}
-table(agroListeTotal$residence, agroListeTotal$centre)
+round(sd(table(agroListeTotal$periode)), 2)   
 ```
+
+```{r}
+round(cor( table(agroListeTotal$periode),table(agroListeTotal$residence) ), 2)
+```
+
+moyenne, médiane, 
+variance, écart-type
+quantile, percentile
+
+skewness, kurtosis
+
+```{r}
+#table(agroListeTotal$residence, agroListeTotal$periode)
+```
+
+```{r}
+#mean(table(agroListeTotal$residence, agroListeTotal$periode))
+```
+
+```{r}
+ #table(agroListeTotal$residence, agroListeTotal$centre)
+```
+
+```{r}
+#mean(table(agroListeTotal$residence, agroListeTotal$centre))
+```
+ 
+```{r}
+
+```
+
+
+
 
 
 
