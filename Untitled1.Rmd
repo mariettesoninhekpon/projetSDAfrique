@@ -1,0 +1,231 @@
+---
+title: "rapportProjet"
+author: "Mariette"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r}
+library(gsheet)
+library(dplyr)
+```
+
+## Importer le google sheet
+```{r}
+library(gsheet)
+
+agroListe <- gsheet2tbl("https://docs.google.com/spreadsheets/d/1CzQZoqGDfIPUUQDyYNcvDH2TmrvEc9c4xngdPa4O80M/edit?usp=sharing")
+```
+
+```{r}
+colnames(agroListe)
+```
+
+# Supprimer la colonne Horodateur
+```{r}
+library(dplyr)
+agroListe$Horodateur <- NULL
+```
+
+## Renommer les noms des colonnes
+```{r}
+library(dplyr)
+agroListe <- agroListe%>%
+  dplyr::rename(nom =`Nom de l'apprenant`)
+```
+
+```{r}
+colnames(agroListe)
+```
+
+```{r}
+library(dplyr)
+
+agroListe <- agroListe%>%
+  dplyr::rename(prenom =`Prénoms de l'apprenant`)
+```
+
+```{r}
+agroListe <- agroListe%>%
+  dplyr::rename(contact =`Contact de l'apprenant`)
+```
+
+```{r}
+agroListe <- agroListe%>%
+  dplyr::rename(email = `Email de l'apprenant`)
+```
+
+```{r}
+agroListe <- agroListe%>%
+  dplyr::rename(residence=`Lieu de résidence (commune/arrondissement)`)
+```
+
+```{r}
+agroListe <- agroListe%>%
+  dplyr::rename(diplome = `Niveau d'étude (avant la formation)`)
+```
+
+```{r}
+agroListe <- agroListe%>%
+  dplyr::rename(domaine=`Domaines de formation 
+`)
+```
+
+```{r}
+agroListe <- agroListe%>%
+  dplyr::rename(periode=`Durée de la formation 
+`)
+```
+
+```{r}
+agroListe <- agroListe%>%
+  dplyr::rename(centre=`Nom du centre de formation 
+`)
+```
+
+```{r}
+agroListe <- agroListe%>%
+  dplyr::rename(localisation=`Localisation du centre de formation (commune/arrondissement)
+`)
+```
+
+```{r}
+agroListe <- agroListe%>%
+  dplyr::rename(an=`Année d'obtention du diplôme en entrepreneuriat agricole 
+`)
+```
+
+```{r}
+agroListe <- agroListe%>%
+  dplyr::rename(occupation=`Occupation actuelle 
+`)
+```
+
+```{r}
+colnames(agroListe)
+```
+
+# Conserver les diplômés de 2021 à 2023
+```{r}
+library(dplyr)
+agroListeAfter2020 <- filter(agroListe, an > 2020)
+```
+
+# Enlever la période de 3 ans
+```{r}
+library(dplyr)
+agroListeAfter2020P <- filter(agroListeAfter2020, periode !='3 ans' )
+```
+
+# ôter LaRAEAq
+```{r}
+library(dplyr)
+agroListeAfter2020PC <- filter(agroListeAfter2020P, centre !='LaRAEAq' )
+```
+
+```{r}
+colnames(agroListeAfter2020PC)
+dim(agroListeAfter2020PC)
+```
+
+```{r}
+head(agroListeAfter2020PC)
+```
+
+#Retenir ceux qui n'ont pas de travail
+```{r}
+library(dplyr)
+agroListeAfter2020PCO <- filter(agroListeAfter2020PC, occupation =='Au chômage' )
+```
+
+```{r}
+head(agroListeAfter2020PCO)
+```
+
+```{r}
+colnames(agroListeAfter2020PCO)
+```
+
+
+#Arranger selon l'email 
+```{r}
+agroListeTotal <- arrange(agroListeAfter2020PCO, email)
+
+head(agroListeTotal)
+```
+```{r}
+colnames(agroListeTotal)
+```
+
+
+# Faire des visuels
+```{r}
+library(ggplot2)
+library(ggthemes)
+```
+
+# x=centre, y=residence, fill=periode
+```{r}
+ggplot(data=agroListeTotal, aes(x=centre, y=residence, fill=periode))+
+  geom_bar(stat="identity", width=0.5, position = "dodge")+
+  xlab("")+
+  ylab("")+
+  theme_minimal()+
+  labs(fill="periode")
+ 
+```
+
+# x=periode, y=residence, fill=an
+```{r}
+ggplot(data=agroListeTotal, aes(x=periode, y=residence, fill=an))+
+  geom_bar(stat="identity", width=0.5, position = "dodge")+
+  xlab("")+
+  ylab("")+
+  theme_minimal()+
+  labs(fill="an")
+```
+
+
+# Analyse statistique
+
+```{r}
+summary(agroListeTotal)
+```
+
+```{r}
+table(agroListeTotal)
+```
+
+```{r}
+table(agroListeTotal$residence)
+```
+
+```{r}
+mean(table(agroListeTotal$residence))
+```
+
+```{r}
+agroListeTotal$residence <- as.factor(agroListeTotal$residence)
+```
+
+```{r}
+summary(agroListeTotal)
+```
+
+```{r}
+table(agroListeTotal$residence, agroListeTotal$periode)
+```
+
+```{r}
+table(agroListeTotal$residence, agroListeTotal$centre)
+```
+
+
+
+
+
