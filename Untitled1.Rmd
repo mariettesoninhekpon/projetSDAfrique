@@ -1,6 +1,6 @@
 ---
-title: "rapportProjet"
-author: "Mariette"
+title: "Main d'oeuvre qualifiée pour l'entrepreneuriat agricole"
+author: "Mariette SONINHEKPON, Françoise DABLI, Gwladys TOSSOU-BOCO"
 date: "`r Sys.Date()`"
 output: html_document
 ---
@@ -158,6 +158,8 @@ agroListeTotal <- arrange(agroListeAfter2020PCO, email)
 
 head(agroListeTotal)
 ```
+
+
 ```{r}
 colnames(agroListeTotal)
 ```
@@ -191,41 +193,119 @@ ggplot(data=agroListeTotal, aes(x=periode, y=residence, fill=an))+
 ```
 
 
-# Analyse statistique
+# 
+```{r}
+library(dplyr)
+glimpse(agroListeTotal)
+```
+
 
 ```{r}
 summary(agroListeTotal)
 ```
 
+
 ```{r}
-table(agroListeTotal)
+str(agroListeTotal)
 ```
+
+
+## Déterminer la distribution de la variable "residence"  
 
 ```{r}
 table(agroListeTotal$residence)
 ```
 
 ```{r}
-mean(table(agroListeTotal$residence))
+round(mean(table(agroListeTotal$residence)), 2)
 ```
 
 ```{r}
-agroListeTotal$residence <- as.factor(agroListeTotal$residence)
+round(median(table(agroListeTotal$residence)), 2)
 ```
 
 ```{r}
-summary(agroListeTotal)
+round(sd(table(agroListeTotal$residence)), 2)
 ```
 
 ```{r}
-table(agroListeTotal$residence, agroListeTotal$periode)
+round(var(table(agroListeTotal$residence)), 2)
+```
+
+
+# Déterminer la distribution de la variable "periode"
+```{r}
+table(agroListeTotal$periode)
+```
+
+
+# Moyenne
+```{r}
+round(mean(table(agroListeTotal$periode)), 2)
+```
+
+# Médiane
+```{r}
+round(median(table(agroListeTotal$periode)))   
+```
+
+# écart-type
+```{r}
+round(sd(table(agroListeTotal$periode)), 2 )
+```
+
+# Variance
+```{r}
+round(var(table(agroListeTotal$periode)), 2)    
+```
+
+
+
+#Pour déterminer la proportion des variables
+```{r}
+table_resid <- table(agroListeTotal$residence)
+print(table_resid)
 ```
 
 ```{r}
-table(agroListeTotal$residence, agroListeTotal$centre)
+prop.table(table_resid)
+```
+
+```{r}
+table_peri <- table(agroListeTotal$periode)
+print(table_peri)
+```
+
+```{r}
+prop.table(table_peri)
+```
+
+#Distribution actuelle
+```{r}
+table(agroListeTotal$residence, agroListeTotal$periode) 
 ```
 
 
 
+# Graphique  des communes représentées
+```{r}
+barplot(table(agroListeTotal$residence), xlab="commune")
+```
+
+
+# Graphique année formation en fonction de commune 
+```{r}
+plot(agroListeTotal$an ~ agroListeTotal$residence, xlab="commune", ylab="année formation")
+```
+
+
+#Chi-Square Statistical Test 
+
+```{r}
+chisq.test(agroListeTotal$residence, agroListeTotal$periode)
+```
+
+#Interpréter le Chi-Square Test
+La relation est statistiquement significative entre la durée de formation et le lieu de résidence des apprenants.
 
 
