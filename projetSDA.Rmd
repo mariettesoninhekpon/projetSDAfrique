@@ -62,7 +62,6 @@ agroListe <- gsheet2tbl("https://docs.google.com/spreadsheets/d/1CzQZoqGDfIPUUQD
 colnames(agroListe)
 ```
 
-
 ```{r}
 # Supprimer la colonne Horodateur
 library(dplyr)
@@ -187,6 +186,7 @@ agroListeAfter2020PCO <- filter(agroListeAfter2020PC, occupation =='Au chômage'
 ```
 
 ```{r}
+# Montrer les premières lignes
 head(agroListeAfter2020PCO)
 ```
 
@@ -194,10 +194,9 @@ head(agroListeAfter2020PCO)
 colnames(agroListeAfter2020PCO)
 ```
 
-
  
 ```{r}
-### Arranger selon l'email
+# Arranger selon l'email
 
 agroListeTotal <- arrange(agroListeAfter2020PCO, email)
 
@@ -220,8 +219,8 @@ library(ggthemes)
 ```{r}
 ggplot(data=agroListeTotal, aes(x=centre, y=residence, fill=periode))+
   geom_bar(stat="identity", width=0.5, position = "dodge")+
-  xlab("")+
-  ylab("")+
+  xlab("centre de formation")+
+  ylab("commune de résidence")+
   theme_minimal()+
   labs(fill="periode")
  
@@ -231,8 +230,8 @@ ggplot(data=agroListeTotal, aes(x=centre, y=residence, fill=periode))+
 ```{r}
 ggplot(data=agroListeTotal, aes(x=periode, y=residence, fill=an))+
   geom_bar(stat="identity", width=0.5, position = "dodge")+
-  xlab("")+
-  ylab("")+
+  xlab("durée de formation")+
+  ylab("commune de résidence")+
   theme_minimal()+
   labs(fill="an")
 ```
@@ -285,7 +284,7 @@ round(var(table(agroListeTotal$residence)), 2)
 table(agroListeTotal$periode)
 ```
 
-## Analyse de la tendance centrale de la variable 'residence'
+## Analyse de la tendance centrale de la variable 'periode'
 
 ### La moyenne
 ```{r}
