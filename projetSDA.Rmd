@@ -2,13 +2,49 @@
 title: "Main d'oeuvre qualifiée pour l'entrepreneuriat agricole"
 author: "Mariette SONINHEKPON, Françoise DABLI, Gwladys TOSSOU-BOCO"
 date: "`r Sys.Date()`"
-output: html_document
+output: 
+  html_document: 
+    toc: yes
+    number_sections: yes
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+# Introduction
+
+Le secteur agricole constitue le pilier principal pour l'atteinte du 2ème Objectif de Développement Durable (ODD) «Faim zéro» dans tous les pays du monde car il est la principale source qui fournit de produits alimentaires aux populations. Pour parvenir à la «Faim Zéro», il s’avère nécessaire de disposer de main d’ouvre ayant les compétences adéquates qui favorisent le développement des activités du secteur de l’entrepreneuriat agricole à savoir la production végétale, la production animale, l’agrobusiness...  
+Une rémunération de la main d’œuvre qualifiée à sa juste valeur permettrait aussi au secteur de l’entrepreneuriat agricole de contribuer aux objectifs 1 «Eradiquer la pauvreté»  et 8 «Travail décent et croissance économique» des ODD.
+Le Bénin ne dispose pas de données sur tous les centres de formations professionnelles en agriculture de même que les personnes qualifiées ressortissant de ces centres. Ainsi il se pose le problème d’insertion professionnelle à un emploi décent dans l’entrepreneuriat agricole. 
+
+
+# Objectifs
+
+Objectif Général : Créer un partenariat  entre la main d’œuvre qualifiée et les entreprises agricoles.
+Plus spécifiquement il s’agit : 
+Objectif Spécifique 1 : Etablir un répertoire de la main d’œuvre qualifiée de chaque commune ou l’arrondissement.
+Objectif Spécifique 2 : Identifier l’entreprise agricole la plus proche de chaque main d’œuvre 
+
+# Hypothèses
+
+Faire sa prestation dans l’entreprise la plus proche permet de réduire les frais de déplacement pour mieux profiter de sa rémunération.
+
+# Méthodologie
+
+* Notre étude est basée sur la formation professionnelle en entrepreneuriat agricole.
+
+* Participants : au moins 6 mois de formation en entrepreneuriat agricole
+.
+* Nombre de personnes ayant rempli le questionnaire d’étude : 34 personnes.
+
+* Cotonou, Abomey-Calavi, Porto-Novo, Bohicon, Adjarra, Allada, Aplahoué, Dassa-Zoumè, Pobè, Savè, Tori-Cada, Zagnanado, Agouagon (Glazoué).
+
+* Packages utilisés : gsheet, dplyr, ggthemes, ggplot2 
+
+# Résultats
+
+##  Packages nécessaires
 
 ```{r}
 library(gsheet)
@@ -26,13 +62,13 @@ agroListe <- gsheet2tbl("https://docs.google.com/spreadsheets/d/1CzQZoqGDfIPUUQD
 colnames(agroListe)
 ```
 
-# Supprimer la colonne Horodateur
+### Supprimer la colonne Horodateur
 ```{r}
 library(dplyr)
 agroListe$Horodateur <- NULL
 ```
 
-## Renommer les noms des colonnes
+### Renommer les noms des colonnes
 ```{r}
 library(dplyr)
 agroListe <- agroListe%>%
@@ -110,19 +146,19 @@ agroListe <- agroListe%>%
 colnames(agroListe)
 ```
 
-# Conserver les diplômés de 2021 à 2023
+### Conserver les diplômés de 2021 à 2023
 ```{r}
 library(dplyr)
 agroListeAfter2020 <- filter(agroListe, an > 2020)
 ```
 
-# Enlever la période de 3 ans
+### Enlever la période de 3 ans
 ```{r}
 library(dplyr)
 agroListeAfter2020P <- filter(agroListeAfter2020, periode !='3 ans' )
 ```
 
-# ôter LaRAEAq
+### ôter LaRAEAq
 ```{r}
 library(dplyr)
 agroListeAfter2020PC <- filter(agroListeAfter2020P, centre !='LaRAEAq' )
@@ -137,7 +173,7 @@ dim(agroListeAfter2020PC)
 head(agroListeAfter2020PC)
 ```
 
-# Retenir ceux qui n'ont pas de travail
+### Retenir ceux qui n'ont pas de travail
 ```{r}
 library(dplyr)
 agroListeAfter2020PCO <- filter(agroListeAfter2020PC, occupation =='Au chômage' )
@@ -152,7 +188,7 @@ colnames(agroListeAfter2020PCO)
 ```
 
 
-# Arranger selon l'email 
+### Arranger selon l'email 
 ```{r}
 agroListeTotal <- arrange(agroListeAfter2020PCO, email)
 
@@ -163,14 +199,15 @@ head(agroListeTotal)
 colnames(agroListeTotal)
 ```
 
+## Visualisation des données
 
-# Faire des visuels
+### Packages nécessaires
 ```{r}
 library(ggplot2)
 library(ggthemes)
 ```
 
-# x=centre, y=residence, fill=periode
+### Répartition des apprenants par centre de formation 
 ```{r}
 ggplot(data=agroListeTotal, aes(x=centre, y=residence, fill=periode))+
   geom_bar(stat="identity", width=0.5, position = "dodge")+
@@ -181,7 +218,7 @@ ggplot(data=agroListeTotal, aes(x=centre, y=residence, fill=periode))+
  
 ```
 
-# x=periode, y=residence, fill=an
+### Répartition des apprenants par durée de formation en fonction de la commune de résidence
 ```{r}
 ggplot(data=agroListeTotal, aes(x=periode, y=residence, fill=an))+
   geom_bar(stat="identity", width=0.5, position = "dodge")+
@@ -192,7 +229,11 @@ ggplot(data=agroListeTotal, aes(x=periode, y=residence, fill=an))+
 ```
 
 
-# 
+```{r}
+library(dplyr)
+glimpse(agroListeTotal)
+```
+ 
 ```{r}
 summary(agroListeTotal)
 ```
@@ -201,52 +242,60 @@ summary(agroListeTotal)
 str(agroListeTotal)
 ```
 
-# Distribution de residence
+## Déterminer la distribution de la variable "residence"
+
 ```{r}
 table(agroListeTotal$residence)
 ```
 
-
+### La moyenne de la distribution des lieux de résidence 
 ```{r}
 round(mean(table(agroListeTotal$residence)), 2)
 ```
 
+### La médiane
 ```{r}
 round(median(table(agroListeTotal$residence)), 2)
 ```
 
+### L'écart-type
 ```{r}
 round(sd(table(agroListeTotal$residence)), 2)     
 ```
 
+### La variance
 ```{r}
 round(var(table(agroListeTotal$residence)), 2)
 ```
 
 
-#Distribution de periode
+## Déterminer la distribution de la variable "periode"
 ```{r}
 table(agroListeTotal$periode)
 ```
 
+### Moyenne
 ```{r}
 round(mean(table(agroListeTotal$periode)), 2)   
 ```
 
+### Médiane
 ```{r}
 round(median(table(agroListeTotal$periode)), 2)
 ```
 
+### écart-type
 ```{r}
 round(sd(table(agroListeTotal$periode)), 2)   
 ```
 
+### Variance
 ```{r}
 round(var(table(agroListeTotal$periode)), 2)
 ```
 
-# Pour déterminer la proportion des variables 
-
+ 
+## Pour déterminer les proportions de la variable 'residence'
 ```{r}
 table_resid <- table(agroListeTotal$residence)
 print(table_resid)
@@ -256,6 +305,7 @@ print(table_resid)
 prop.table(table_resid)
 ```
 
+## Pour déterminer les proportions de la variable 'periode'
 ```{r}
 table_peri <- table(agroListeTotal$periode)
 print(table_peri)
@@ -266,35 +316,52 @@ prop.table(table_peri)
 ```
 
 
-#Distribution actuelle
+## Distribution actuelle
 ```{r}
 table(agroListeTotal$residence, agroListeTotal$periode) 
   
 ```
  
  
- 
-#Plots
+## Répartition des communes représentées
 ```{r}
 barplot(table(agroListeTotal$residence), xlab="commune")
 ```
 
-
+## Répartition de la durée de formation en fonction de la commune de résidence 
 ```{r}
 plot(agroListeTotal$an ~ agroListeTotal$residence, xlab="commune", ylab="année formation")
 ```
 
 
-#Chi-Square Statistical Test 
+## Chi-Square Statistical Test 
 
 ```{r}
 chisq.test(agroListeTotal$residence, agroListeTotal$periode)
 ```
 
-#Interpréter le Chi-Square Test
+## Interpréter le Chi-Square Test
+
 La relation est statistiquement significative entre la durée de formation et le lieu de résidence des apprenants.
 
 
+# Conclusion
+
+La réalisation de ce projet nous permettrait non seulement de régler le problème de sous-emploi mais aussi de répondre aux ODD à savoir :
+* 1 (éliminer la pauvreté)
+* 2 (faim zéro)
+* 3 (santé pour tous)
+* 8 (emploi décent) et
+* 12 (production  durable) au Bénin
+
+
+# Perspectives
+
+* Avoir un répertoire de tous les centres de formation en entrepreneuriat agricole au Bénin.
+
+* Avoir un répertoire des personnes qualifiées ressortissant de ces centres de formation 
+
+* Identifier l’entreprise agricole la plus proche de chaque main d’œuvre qualifiée afin de créer un partenariat gagnant-gagnant entre entrepreneurs agricoles et main d’œuvre agricole qualifiée.
 
 
 
